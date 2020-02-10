@@ -31,11 +31,13 @@
             this.components = new System.ComponentModel.Container();
             this.picCanvas = new System.Windows.Forms.PictureBox();
             this.btnStart = new System.Windows.Forms.Button();
-            this.tmrAnimate = new System.Windows.Forms.Timer(this.components);
+            this.tmrASTARAnimate = new System.Windows.Forms.Timer(this.components);
             this.btnAStarSolutionOnly = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.trackSize = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackSize)).BeginInit();
             this.SuspendLayout();
@@ -48,10 +50,11 @@
             this.picCanvas.TabIndex = 0;
             this.picCanvas.TabStop = false;
             this.picCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.picCanvas_Paint);
+            this.picCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseDown);
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(808, 302);
+            this.btnStart.Location = new System.Drawing.Point(759, 374);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(274, 41);
             this.btnStart.TabIndex = 3;
@@ -59,14 +62,14 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // tmrAnimate
+            // tmrASTARAnimate
             // 
-            this.tmrAnimate.Interval = 10;
-            this.tmrAnimate.Tick += new System.EventHandler(this.tmrAnimate_Tick);
+            this.tmrASTARAnimate.Interval = 10;
+            this.tmrASTARAnimate.Tick += new System.EventHandler(this.tmrASTARAnimate_Tick);
             // 
             // btnAStarSolutionOnly
             // 
-            this.btnAStarSolutionOnly.Location = new System.Drawing.Point(808, 402);
+            this.btnAStarSolutionOnly.Location = new System.Drawing.Point(759, 431);
             this.btnAStarSolutionOnly.Name = "btnAStarSolutionOnly";
             this.btnAStarSolutionOnly.Size = new System.Drawing.Size(274, 41);
             this.btnAStarSolutionOnly.TabIndex = 4;
@@ -99,17 +102,38 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(806, 138);
+            this.label2.Location = new System.Drawing.Point(796, 115);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 48);
+            this.label2.Size = new System.Drawing.Size(101, 84);
             this.label2.TabIndex = 7;
-            this.label2.Text = "입구 : 파란색\r\n출구 : 녹색\r\n탐색 : 하늘색\r\n최단거리 : 빨간색";
+            this.label2.Text = "시작 : 파란색\r\n\r\n출구 : 녹색\r\n\r\n탐색 : 하늘색\r\n\r\n최단거리 : 빨간색\r\n";
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(759, 230);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(274, 41);
+            this.btnReset.TabIndex = 8;
+            this.btnReset.Text = "맵 다시 생성";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(757, 568);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(305, 12);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "지도위에서 마우스 오른쪽 버튼 : 시작 , 왼쪽버튼 : 출구";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 603);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.trackSize);
             this.Controls.Add(this.label1);
@@ -129,10 +153,12 @@
 
         private System.Windows.Forms.PictureBox picCanvas;
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Timer tmrAnimate;
+        private System.Windows.Forms.Timer tmrASTARAnimate;
         private System.Windows.Forms.Button btnAStarSolutionOnly;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackSize;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Label label3;
     }
 }

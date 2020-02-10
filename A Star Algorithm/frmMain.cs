@@ -63,6 +63,14 @@ namespace A_Star_Algorithm
             map_height = picCanvas.Height / trackSize.Value;
 
             MakeMap();
+
+
+
+            //Fill Start and End Position 
+            start = world[map_width];
+            start.pathType = Path.TYPE.START;
+            end = world[map_width * map_height - map_width - 1];
+            end.pathType = Path.TYPE.END;
         }
 
         private Path GetRandomPath(int x, int y, int size)
@@ -121,33 +129,11 @@ namespace A_Star_Algorithm
             }
 
 
-
-            //Fill Start and End Position 
-            start = world[map_width];
-            start.pathType = Path.TYPE.START;
-            end = world[map_width * map_height - map_width - 1];
-            end.pathType = Path.TYPE.END;
-
-
-            //Setting Neighbors
-            for (int i = 0; i < world.Count; i++)
-            {
-                if (i - 1 >= 0)
-                    world[i].AddNeghibor(world[i - 1]);
-                if (i + 1 < world.Count)
-                    world[i].AddNeghibor(world[i + 1]);
-                if (i - map_width >= 0)
-                    world[i].AddNeghibor(world[i - map_width]);
-                if (i + map_width < world.Count)
-                    world[i].AddNeghibor(world[i + map_width]);
-            }
-
             Graphics g = Graphics.FromImage(drawImage);
             foreach (Path path in world)
             {
                 path.Draw(g);
             }
-
         }
 
         private float CostDistance(Path current, Path target)
@@ -175,7 +161,7 @@ namespace A_Star_Algorithm
                 curr = curr.Before;
             }
         }
-        private void tmrAnimate_Tick(object sender, EventArgs e)
+        private void tmrASTARAnimate_Tick(object sender, EventArgs e)
         {
             //Drawing
             Graphics g = Graphics.FromImage(drawImage);
@@ -191,7 +177,7 @@ namespace A_Star_Algorithm
 
                 if (current.pathType == Path.TYPE.END)
                 {
-                    tmrAnimate.Enabled = false;
+                    tmrASTARAnimate.Enabled = false;
                     isFound = true;
                     //we Found!
                     BacktrackingPath(current);
@@ -242,7 +228,7 @@ namespace A_Star_Algorithm
 
             if (!isFound && open_set.Count == 0)
             {
-                tmrAnimate.Enabled = false;
+                tmrASTARAnimate.Enabled = false;
                 MessageBox.Show("No Solution!");
             }
         }
@@ -311,21 +297,36 @@ namespace A_Star_Algorithm
 
         private void btnAStarSolutionOnly_Click(object sender, EventArgs e)
         {
-            tmrAnimate.Enabled = false;
+            btnAStarSolutionOnly.Enabled = false;
+            btnStart.Enabled = false;
+            tmrASTARAnimate.Enabled = false;
             open_set.Clear();
             closed_set.Clear();
 
 
+            //Setting Neighbors
+            for (int i = 0; i < world.Count; i++)
+            {
+                if (i - 1 >= 0)
+                    world[i].AddNeghibor(world[i - 1]);
+                if (i + 1 < world.Count)
+                    world[i].AddNeghibor(world[i + 1]);
+                if (i - map_width >= 0)
+                    world[i].AddNeghibor(world[i - map_width]);
+                if (i + map_width < world.Count)
+                    world[i].AddNeghibor(world[i + map_width]);
+            }
 
-            world.Clear();
-            MakeMap();
+
             //Astar Start
             FindAStarPath(start, end, CostDistance);
         }
 
         private void trackSize_Scroll(object sender, EventArgs e)
         {
-            tmrAnimate.Enabled = false;
+            btnAStarSolutionOnly.Enabled = true;
+            btnStart.Enabled = true;
+            tmrASTARAnimate.Enabled = false;
 
             map_width = picCanvas.Width / trackSize.Value;
             map_height = picCanvas.Height / trackSize.Value;
@@ -346,12 +347,74 @@ namespace A_Star_Algorithm
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+        
+        private void picCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            tmrAnimate.Enabled = false;
+            int x = (int)(e.X / trackSize.Value);
+            int y = (int)(e.Y / trackSize.Value);
+
+            Path curr = world[x + y *map_width ];
+
+            if (e.Button == MouseButtons.Left)
+            {
+                start.pathType = Path.TYPE.WALL;
+                start = curr;
+                start.pathType = Path.TYPE.START;
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                end.pathType = Path.TYPE.WALL;
+                end = curr;
+                end.pathType = Path.TYPE.END;
+            }
+
+            Graphics g = Graphics.FromImage(drawImage);
+            foreach (Path path in world)
+            {
+                path.Draw(g);
+            }
+            picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            btnAStarSolutionOnly.Enabled = true;
+            btnStart.Enabled = true;
+            tmrASTARAnimate.Enabled = false;
+
+            map_width = picCanvas.Width / trackSize.Value;
+            map_height = picCanvas.Height / trackSize.Value;
 
             world.Clear();
             MakeMap();
+
+            Graphics g = Graphics.FromImage(drawImage);
+            foreach (Path path in world)
+            {
+                path.Draw(g);
+            }
+            picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            btnAStarSolutionOnly.Enabled = false;
+            btnStart.Enabled = false;
+            tmrASTARAnimate.Enabled = false;
+
+            //Setting Neighbors
+            for (int i = 0; i < world.Count; i++)
+            {
+                if (i - 1 >= 0)
+                    world[i].AddNeghibor(world[i - 1]);
+                if (i + 1 < world.Count)
+                    world[i].AddNeghibor(world[i + 1]);
+                if (i - map_width >= 0)
+                    world[i].AddNeghibor(world[i - map_width]);
+                if (i + map_width < world.Count)
+                    world[i].AddNeghibor(world[i + map_width]);
+            }
+
 
             //Astar Preload
             open_set.Clear();
@@ -366,7 +429,7 @@ namespace A_Star_Algorithm
                 path.Draw(g);
             }
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
-            tmrAnimate.Enabled = true; //Astar Start!
+            tmrASTARAnimate.Enabled = true; //Astar Start!
         }
     }
 }
