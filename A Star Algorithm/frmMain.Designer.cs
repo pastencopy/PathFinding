@@ -35,6 +35,7 @@
             this.btnAStarSolutionOnly = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.trackSize = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackSize)).BeginInit();
             this.SuspendLayout();
@@ -46,6 +47,7 @@
             this.picCanvas.Size = new System.Drawing.Size(703, 579);
             this.picCanvas.TabIndex = 0;
             this.picCanvas.TabStop = false;
+            this.picCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.picCanvas_Paint);
             // 
             // btnStart
             // 
@@ -59,7 +61,7 @@
             // 
             // tmrAnimate
             // 
-            this.tmrAnimate.Interval = 1;
+            this.tmrAnimate.Interval = 10;
             this.tmrAnimate.Tick += new System.EventHandler(this.tmrAnimate_Tick);
             // 
             // btnAStarSolutionOnly
@@ -94,11 +96,21 @@
             this.trackSize.Value = 10;
             this.trackSize.Scroll += new System.EventHandler(this.trackSize_Scroll);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(806, 138);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(101, 48);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "입구 : 파란색\r\n출구 : 녹색\r\n탐색 : 하늘색\r\n최단거리 : 빨간색";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 603);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.trackSize);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnAStarSolutionOnly);
@@ -121,5 +133,6 @@
         private System.Windows.Forms.Button btnAStarSolutionOnly;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackSize;
+        private System.Windows.Forms.Label label2;
     }
 }

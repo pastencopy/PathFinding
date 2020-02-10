@@ -40,8 +40,15 @@ namespace A_Star_Algorithm
         List<Path> open_set = new List<Path>();
         List<Path> closed_set = new List<Path>();
 
-
         Path start, end;
+
+        enum RUN_MODE
+        {
+            ANIMATED,
+            SOLUTION
+        }
+
+        RUN_MODE run_mode = RUN_MODE.ANIMATED;
 
         public frmMain()
         {
@@ -172,9 +179,8 @@ namespace A_Star_Algorithm
         {
             //Drawing
             Graphics g = Graphics.FromImage(drawImage);
+            bool isFound = false;
             
-            bool isFound = false;           
-
             //while(OpenSet > 0)
             //한프레임당 1번씩 수행
             if (open_set.Count > 0)
@@ -335,6 +341,10 @@ namespace A_Star_Algorithm
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
         }
 
+        private void picCanvas_Paint(object sender, PaintEventArgs e)
+        {
+            picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+        }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
