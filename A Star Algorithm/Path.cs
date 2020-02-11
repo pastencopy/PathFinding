@@ -25,10 +25,13 @@ namespace A_Star_Algorithm
         
         public TYPE pathType;
 
-        public float h = float.MaxValue;
-        public float g = float.MaxValue;
+        public float h = float.MaxValue; //A star hScore
+        public float g = float.MaxValue; //A star gScore
+
+        public float dist = float.MaxValue; //Dijkstra Distance
 
         public List<Path> neighbors = new List<Path>();
+
         public Path Before;
         
         public Path(int x, int y, int Size, TYPE pathType)
@@ -55,7 +58,7 @@ namespace A_Star_Algorithm
             }
             else if (pathType == TYPE.END)
             {
-                b = Brushes.GreenYellow;
+                b = Brushes.Green;
             }
             else if (pathType == TYPE.WALL)
             {

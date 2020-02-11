@@ -38,6 +38,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnReset = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.btnDijkstaStart = new System.Windows.Forms.Button();
+            this.tmrDijkstraAnimate = new System.Windows.Forms.Timer(this.components);
+            this.btnDijkstraStartAnimate = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackSize)).BeginInit();
             this.SuspendLayout();
@@ -54,7 +57,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(759, 374);
+            this.btnStart.Location = new System.Drawing.Point(759, 447);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(274, 41);
             this.btnStart.TabIndex = 3;
@@ -69,7 +72,7 @@
             // 
             // btnAStarSolutionOnly
             // 
-            this.btnAStarSolutionOnly.Location = new System.Drawing.Point(759, 431);
+            this.btnAStarSolutionOnly.Location = new System.Drawing.Point(759, 494);
             this.btnAStarSolutionOnly.Name = "btnAStarSolutionOnly";
             this.btnAStarSolutionOnly.Size = new System.Drawing.Size(274, 41);
             this.btnAStarSolutionOnly.TabIndex = 4;
@@ -127,11 +130,38 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "지도위에서 마우스 오른쪽 버튼 : 시작 , 왼쪽버튼 : 출구";
             // 
+            // btnDijkstaStart
+            // 
+            this.btnDijkstaStart.Location = new System.Drawing.Point(759, 370);
+            this.btnDijkstaStart.Name = "btnDijkstaStart";
+            this.btnDijkstaStart.Size = new System.Drawing.Size(274, 41);
+            this.btnDijkstaStart.TabIndex = 10;
+            this.btnDijkstaStart.Text = "Dijkstra 알고리즘 (솔루션만)";
+            this.btnDijkstaStart.UseVisualStyleBackColor = true;
+            this.btnDijkstaStart.Click += new System.EventHandler(this.btnDijkstaStart_Click);
+            // 
+            // tmrDijkstraAnimate
+            // 
+            this.tmrDijkstraAnimate.Interval = 10;
+            this.tmrDijkstraAnimate.Tick += new System.EventHandler(this.tmrDijkstraAnimate_Tick);
+            // 
+            // btnDijkstraStartAnimate
+            // 
+            this.btnDijkstraStartAnimate.Location = new System.Drawing.Point(759, 323);
+            this.btnDijkstraStartAnimate.Name = "btnDijkstraStartAnimate";
+            this.btnDijkstraStartAnimate.Size = new System.Drawing.Size(274, 41);
+            this.btnDijkstraStartAnimate.TabIndex = 11;
+            this.btnDijkstraStartAnimate.Text = "Dijkstra 알고리즘 애니메이션 시작";
+            this.btnDijkstraStartAnimate.UseVisualStyleBackColor = true;
+            this.btnDijkstraStartAnimate.Click += new System.EventHandler(this.btnDijkstraStartAnimate_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 603);
+            this.Controls.Add(this.btnDijkstraStartAnimate);
+            this.Controls.Add(this.btnDijkstaStart);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.label2);
@@ -160,5 +190,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnDijkstaStart;
+        private System.Windows.Forms.Timer tmrDijkstraAnimate;
+        private System.Windows.Forms.Button btnDijkstraStartAnimate;
     }
 }

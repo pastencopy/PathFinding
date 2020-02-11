@@ -10,9 +10,18 @@
  * 결과    Success : goal 부터 백트래킹 하여 Path.pathType 속성을 PATH로 바꿈,
  *                   Goal에서 부터 Path.Before을 백트래킹 하여 추적하면 최단경로가 됨.
  *         Fail : Not Found 메시지 박스
+ *         
+ *         
+ *         
+ * void Dijkstra(Path start, Path goal)
+ * 
+ * 결과    Success : goal 부터 백트래킹 하여 Path.pathType 속성을 PATH로 바꿈,
+ *                   Goal에서 부터 Path.Before을 백트래킹 하여 추적하면 최단경로가 됨.
+ *         Fail : Not Found 메시지 박스
  * 
  * 
- * Reference : https://en.wikipedia.org/wiki/A*_search_algorithm
+ * A Star reference : https://en.wikipedia.org/wiki/A*_search_algorithm
+ * Dijkstra reference : https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
  */
 
 using System;
@@ -85,6 +94,21 @@ namespace A_Star_Algorithm
             }
         }
 
+        private void MakeNeighbors()
+        {
+            //Setting Neighbors
+            for (int i = 0; i < world.Count; i++)
+            {
+                if (i - 1 >= 0)
+                    world[i].AddNeghibor(world[i - 1]);
+                if (i + 1 < world.Count)
+                    world[i].AddNeghibor(world[i + 1]);
+                if (i - map_width >= 0)
+                    world[i].AddNeghibor(world[i - map_width]);
+                if (i + map_width < world.Count)
+                    world[i].AddNeghibor(world[i + map_width]);
+            }
+        }
         private void MakeMap()
         {
             int size = (Math.Max(picCanvas.Width, picCanvas.Height) / map_width);
@@ -221,7 +245,8 @@ namespace A_Star_Algorithm
 
             foreach (Path path in open_set)
             {
-                path.Draw(Graphics.FromImage(drawImage),Color.Aqua);
+                if (path.pathType == Path.TYPE.ROAD)
+                    path.Draw(Graphics.FromImage(drawImage),Color.Aqua);
             }
 
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
@@ -233,10 +258,70 @@ namespace A_Star_Algorithm
             }
         }
 
+        private void Dijkstra(Path start, Path goal)
+        {
+            List<Path> openSet = new List<Path>();
+
+            foreach(Path path in world)
+            {
+                if (path.pathType != Path.TYPE.WALL)
+                {
+                    path.dist = float.MaxValue;
+                    path.Before = null;
+                    openSet.Add(path);
+                }
+            }
+            start.dist = 0;
+
+            bool isFound = false;
+
+            while(openSet.Count > 0)
+            {
+                openSet.Sort((Path a, Path b) => { return a.dist.CompareTo(b.dist); });
+                Path current = openSet[0];
+
+                openSet.Remove(current);
+
+                if (current.pathType == Path.TYPE.END)
+                {
+                    //도착
+                    isFound = true;
+                    BacktrackingPath(current);
+                    break;
+                }
+
+                foreach (Path neighb in current.neighbors)
+                {
+                    float bestDistance = current.dist + Distance(current.X, current.Y, neighb.X, neighb.Y);
+
+                    if (bestDistance < neighb.dist)
+                    {
+                        neighb.Before = current;
+                        neighb.dist = bestDistance;
+                    }
+                }
+            }
+
+
+            Graphics g = Graphics.FromImage(drawImage);
+            foreach (Path path in world)
+            {
+                path.Draw(g);
+            }
+            picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+
+            if (isFound == false)
+            {
+                MessageBox.Show("No Solution!");
+            }
+
+        }
+
         private void FindAStarPath(Path start, Path goal, Func<Path,Path,float> heuristic)
         {
             List<Path> openSet = new List<Path>();
             List<Path> closedSet = new List<Path>();
+
             //Astar Preload
             start.g = 0;
             start.h = heuristic(start, end);
@@ -271,7 +356,7 @@ namespace A_Star_Algorithm
                         neighb.Before = current;
                         neighb.g = best_neighb_g;
 
-                        neighb.h = neighb.g + CostDistance(neighb, end);
+                        neighb.h = neighb.g + heuristic(neighb, end);
 
                         if (openSet.Contains(neighb) == false)
                         {
@@ -297,36 +382,19 @@ namespace A_Star_Algorithm
 
         private void btnAStarSolutionOnly_Click(object sender, EventArgs e)
         {
-            btnAStarSolutionOnly.Enabled = false;
-            btnStart.Enabled = false;
-            tmrASTARAnimate.Enabled = false;
-            open_set.Clear();
-            closed_set.Clear();
-
-
+            DisableButtons();
+            
             //Setting Neighbors
-            for (int i = 0; i < world.Count; i++)
-            {
-                if (i - 1 >= 0)
-                    world[i].AddNeghibor(world[i - 1]);
-                if (i + 1 < world.Count)
-                    world[i].AddNeghibor(world[i + 1]);
-                if (i - map_width >= 0)
-                    world[i].AddNeghibor(world[i - map_width]);
-                if (i + map_width < world.Count)
-                    world[i].AddNeghibor(world[i + map_width]);
-            }
-
-
+            MakeNeighbors();
             //Astar Start
             FindAStarPath(start, end, CostDistance);
+
+            EnableButtons();
         }
 
         private void trackSize_Scroll(object sender, EventArgs e)
         {
-            btnAStarSolutionOnly.Enabled = true;
-            btnStart.Enabled = true;
-            tmrASTARAnimate.Enabled = false;
+            DisableButtons();
 
             map_width = picCanvas.Width / trackSize.Value;
             map_height = picCanvas.Height / trackSize.Value;
@@ -340,6 +408,8 @@ namespace A_Star_Algorithm
                 path.Draw(g);
             }
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+
+            EnableButtons();
         }
 
         private void picCanvas_Paint(object sender, PaintEventArgs e)
@@ -378,9 +448,8 @@ namespace A_Star_Algorithm
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            btnAStarSolutionOnly.Enabled = true;
-            btnStart.Enabled = true;
-            tmrASTARAnimate.Enabled = false;
+
+            DisableButtons();
 
             map_width = picCanvas.Width / trackSize.Value;
             map_height = picCanvas.Height / trackSize.Value;
@@ -394,28 +463,27 @@ namespace A_Star_Algorithm
                 path.Draw(g);
             }
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+
+            EnableButtons();
+        }
+
+        private void btnDijkstaStart_Click(object sender, EventArgs e)
+        {
+            DisableButtons();
+
+            //Setting Neighbors
+            MakeNeighbors();
+            Dijkstra(start, end);
+
+            EnableButtons();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            btnAStarSolutionOnly.Enabled = false;
-            btnStart.Enabled = false;
-            tmrASTARAnimate.Enabled = false;
+            DisableButtons();
 
             //Setting Neighbors
-            for (int i = 0; i < world.Count; i++)
-            {
-                if (i - 1 >= 0)
-                    world[i].AddNeghibor(world[i - 1]);
-                if (i + 1 < world.Count)
-                    world[i].AddNeghibor(world[i + 1]);
-                if (i - map_width >= 0)
-                    world[i].AddNeghibor(world[i - map_width]);
-                if (i + map_width < world.Count)
-                    world[i].AddNeghibor(world[i + map_width]);
-            }
-
-
+            MakeNeighbors();
             //Astar Preload
             open_set.Clear();
             closed_set.Clear();
@@ -430,6 +498,110 @@ namespace A_Star_Algorithm
             }
             picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
             tmrASTARAnimate.Enabled = true; //Astar Start!
+        }
+
+
+        private void btnDijkstraStartAnimate_Click(object sender, EventArgs e)
+        {
+            DisableButtons();
+
+            //Dijkstra Preload
+            MakeNeighbors();
+            open_set.Clear();
+            foreach (Path path in world)
+            {
+                if (path.pathType != Path.TYPE.WALL)
+                {
+                    path.dist = float.MaxValue;
+                    path.Before = null;
+                    open_set.Add(path);
+                }
+            }
+            start.dist = 0;
+            tmrDijkstraAnimate.Enabled = true;
+        }
+
+        private void tmrDijkstraAnimate_Tick(object sender, EventArgs e)
+        {
+            Graphics g = Graphics.FromImage(drawImage);
+
+            bool isFound = false;
+
+            if (open_set.Count > 0)
+            {
+                open_set.Sort((Path a, Path b) => { return a.dist.CompareTo(b.dist); });
+                Path current = open_set[0];
+
+                open_set.Remove(current);
+
+                if (current.pathType == Path.TYPE.END)
+                {
+                    //도착
+                    tmrDijkstraAnimate.Enabled = false;
+                    isFound = true;
+                    BacktrackingPath(current);
+
+                    foreach (Path path in world)
+                    {
+                        path.Draw(g);
+                    }
+
+
+                    picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+
+                    return;
+                }
+
+                foreach (Path neighb in current.neighbors)
+                {
+                    float bestDistance = current.dist + Distance(current.X, current.Y, neighb.X, neighb.Y);
+
+                    if (bestDistance < neighb.dist)
+                    {
+                        neighb.Before = current;
+                        neighb.dist = bestDistance;
+                    }
+                }
+            }
+
+            foreach (Path path in world)
+            {
+                path.Draw(g);
+            }
+
+            foreach (Path path in open_set)
+            {
+                if (path.pathType == Path.TYPE.ROAD)
+                    path.Draw(Graphics.FromImage(drawImage), Color.Aqua);
+            }
+
+
+
+            //시작지점과 종료지점프린팅
+
+            picCanvas.CreateGraphics().DrawImageUnscaled(drawImage, 0, 0);
+
+            if (!isFound && open_set.Count == 0)
+            {
+                tmrDijkstraAnimate.Enabled = false;
+                MessageBox.Show("No Solution!");
+            }
+        }
+        private void DisableButtons()
+        {
+            btnDijkstraStartAnimate.Enabled = false;
+            btnDijkstaStart.Enabled = false;
+            tmrDijkstraAnimate.Enabled = false;
+            btnAStarSolutionOnly.Enabled = false;
+            btnStart.Enabled = false;
+            tmrASTARAnimate.Enabled = false;
+        }
+        private void EnableButtons()
+        {
+            btnDijkstraStartAnimate.Enabled = true;
+            btnDijkstaStart.Enabled = true;
+            btnAStarSolutionOnly.Enabled = true;
+            btnStart.Enabled = true;
         }
     }
 }
