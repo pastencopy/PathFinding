@@ -54,11 +54,11 @@ namespace A_Star_Algorithm
             Brush b = Brushes.White;
             if (pathType == TYPE.START)
             {
-                b = Brushes.Blue;
+                b = Brushes.DeepSkyBlue;
             }
             else if (pathType == TYPE.END)
             {
-                b = Brushes.Green;
+                b = Brushes.GreenYellow;
             }
             else if (pathType == TYPE.WALL)
             {

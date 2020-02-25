@@ -5,6 +5,9 @@ A Star Algorithm for Study
  + A Star 알고리즘
  + Dijkstra 알고리즘 
  
+![Astar Searching](screenshot_astar1.png)
+
+![Astar Finish](screenshot_astar2.png)
 
 
 A Star reference : https://en.wikipedia.org/wiki/A*_search_algorithm
